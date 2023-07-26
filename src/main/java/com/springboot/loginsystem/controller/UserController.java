@@ -167,7 +167,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/change-password")
-	public String changepassword1(@RequestParam("password")String password) {
+	public String changepassword1(@RequestParam(required=false, name="password")String password) {
 		if(!Helper.checkUserRole()) {
 			return "redirect:/logout";
 		}
@@ -175,7 +175,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/change-password")
-	public String changepassword2(@RequestParam("password")String password) {
+	public String changepassword2(@RequestParam(required=false, name="password")String password) {
 		if(!Helper.checkUserRole()) {
 			return "redirect:/logout";
 		}
@@ -193,5 +193,28 @@ public class UserController {
 		session.setAttribute("msg", "Password change successfully..");
 		
 		return "redirect:/profile";
+	}
+	
+	@GetMapping("/forgot-password")
+	public String forgotPassword() {
+		return "forgot_password";
+	}
+	
+	@PostMapping("/forgot-password")
+	public String forgotPassword(@RequestParam("email") String email, Model m) {
+		
+		if(userService.checkEmailExist(email)) {
+				User user = userService.getUserByEmail(email);
+				m.addAttribute("user", user);
+				return "redirect:/reset-password";
+			}
+		else {
+			return "forgot_password";
+		}
+	}
+	
+	@GetMapping("/reset-password")
+	public String resetPassword() {
+		return "reset_password";
 	}
 }
