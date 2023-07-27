@@ -205,8 +205,8 @@ public class UserController {
 		
 		if(userService.checkEmailExist(email)) {
 				User user = userService.getUserByEmail(email);
-				m.addAttribute("user", user);
-				return "redirect:/reset-password";
+				m.addAttribute("uid", user.getId());
+				return "/reset-password";
 			}
 		else {
 			return "forgot_password";
@@ -216,5 +216,17 @@ public class UserController {
 	@GetMapping("/reset-password")
 	public String resetPassword() {
 		return "reset_password";
+	}
+	
+	@PostMapping("/reset-password")
+	public String resetPassword(@RequestParam ("id") int id, @RequestParam("password") String password, @RequestParam("con_password") String con_password) {
+		if(password.equals(con_password)) {
+			User user = userService.loadUserById(id);
+			user.setPassword(password);
+			userService.createOrUpdateUser(user);
+		}else {
+			
+		}
+		return "redirect:/";
 	}
 }
